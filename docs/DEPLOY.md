@@ -10,7 +10,7 @@ The interactive dashboard is a **static Vite SPA** — no Python/PyTorch on the 
    - **Build:** `cd viz/dashboard && npm ci && npm run build`
    - **Output:** `viz/dashboard/dist`
 4. Deploy — **no environment variables** required
-5. Optional: set production domain in Vercel project settings
+5. Production URL: **https://physjepa.vercel.app**
 
 ## Local preview (production build)
 
