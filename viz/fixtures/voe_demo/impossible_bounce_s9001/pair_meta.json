@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "pair_id": "impossible_bounce_s9001",
+  "violation_type": "impossible_bounce",
+  "t_star": 12,
+  "matched_seed": 9001,
+  "description": "Velocity / mass swap with no contact",
+  "occlusion_frames": null,
+  "possible": "possible",
+  "impossible": "impossible"
+}

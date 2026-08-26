@@ -5,6 +5,7 @@ import { EpisodePlayer } from "./components/EpisodePlayer";
 import { Layout } from "./components/Layout";
 import { ProbeComparison } from "./components/ProbeComparison";
 import { TrainingCurves } from "./components/TrainingCurves";
+import { VoEPairReplay } from "./components/VoEPairReplay";
 import { VoESurprisePanel } from "./components/VoESurpriseChart";
 import { fetchJson, paths, violationTypes } from "./lib/loadRun";
 import type {
@@ -13,9 +14,12 @@ import type {
   EpisodeMeta,
   TabId,
   TrainingSummary,
+  VoEDemoIndex,
   VoESurpriseDoc,
 } from "./types/schema";
 import "./index.css";
+
+const DEFAULT_VOE_TYPE = "impossible_bounce";
 
 export default function App() {
   const [tab, setTab] = useState<TabId>("compare");
@@ -28,19 +32,21 @@ export default function App() {
   const [pixelSummary, setPixelSummary] = useState<TrainingSummary | null>(null);
   const [episode, setEpisode] = useState<EpisodeMeta | null>(null);
   const [ablations, setAblations] = useState<AblationsDoc | null>(null);
-  const [voeType, setVoeType] = useState("");
+  const [voeDemo, setVoeDemo] = useState<VoEDemoIndex | null>(null);
+  const [voeType, setVoeType] = useState(DEFAULT_VOE_TYPE);
 
   useEffect(() => {
     let cancelled = false;
     (async () => {
       try {
-        const [cmp, voeDoc, jepa, pixel, ep, abl] = await Promise.all([
+        const [cmp, voeDoc, jepa, pixel, ep, abl, demo] = await Promise.all([
           fetchJson<ComparisonDoc>(paths.comparison()),
           fetchJson<VoESurpriseDoc>(paths.voeEval()),
           fetchJson<TrainingSummary>(paths.jepaSummary()),
           fetchJson<TrainingSummary>(paths.pixelSummary()),
           fetchJson<EpisodeMeta>(paths.episodeMeta()),
           fetchJson<AblationsDoc>(paths.ablations()).catch(() => null),
+          fetchJson<VoEDemoIndex>(paths.voeDemoIndex()).catch(() => null),
         ]);
         if (cancelled) return;
         setComparison(cmp);
@@ -49,8 +55,13 @@ export default function App() {
         setPixelSummary(pixel);
         setEpisode(ep);
         setAblations(abl);
+        setVoeDemo(demo);
         const types = violationTypes(voeDoc);
-        if (types.length > 0) setVoeType(types[0]);
+        if (types.includes(DEFAULT_VOE_TYPE)) {
+          setVoeType(DEFAULT_VOE_TYPE);
+        } else if (types.length > 0) {
+          setVoeType(types[0]);
+        }
         setLoading(false);
       } catch (e) {
         if (!cancelled) {
@@ -77,6 +88,21 @@ export default function App() {
             selected={voeType}
             onSelect={setVoeType}
           />
+        );
+        break;
+      case "voe_replay":
+        content = voeDemo?.pairs?.length ? (
+          <VoEPairReplay
+            index={voeDemo.pairs}
+            selectedType={voeType}
+            onSelectType={setVoeType}
+          />
+        ) : (
+          <p className="hint">
+            No VoE demo pairs. Run{" "}
+            <code>python scripts/export_voe_demo_pairs.py</code> then sync
+            fixtures.
+          </p>
         );
         break;
       case "probes":

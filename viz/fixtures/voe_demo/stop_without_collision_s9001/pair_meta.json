@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "pair_id": "stop_without_collision_s9001",
+  "violation_type": "stop_without_collision",
+  "t_star": 11,
+  "matched_seed": 9001,
+  "description": "Object velocity zeroed mid-flight with no contact",
+  "occlusion_frames": null,
+  "possible": "possible",
+  "impossible": "impossible"
+}

@@ -3,7 +3,7 @@
 [![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
 [![PyTorch](https://img.shields.io/badge/PyTorch-2.0+-ee4c2c.svg)](https://pytorch.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-[![Code style: black-compatible](https://img.shields.io/badge/code%20style-standard-brightgreen.svg)](https://github.com/psf/black)
+[![Vercel Deploy](https://img.shields.io/badge/demo-Vercel-black?logo=vercel)](docs/DEPLOY.md)
 
 **Controlled diagnostic for the JEPA physics claim:** does self-supervised *latent* future prediction encode naive physics (object permanence, collisions) better than a matched *pixel* reconstruction baseline?
 
@@ -23,6 +23,7 @@ Evaluation uses **linear probes** and **violation-of-expectation (VoE)** surpris
 
 | Resource | Path |
 |----------|------|
+| **Live demo (Vercel)** | [`docs/DEPLOY.md`](docs/DEPLOY.md) — import repo on Vercel for instant deploy |
 | Technical report | [`docs/report.md`](docs/report.md) |
 | Demo / SOP script | [`docs/DEMO.md`](docs/DEMO.md) |
 | JSON schema (React) | [`viz/SCHEMA.md`](viz/SCHEMA.md) |
@@ -69,10 +70,13 @@ Or step-by-step — see [Phases](#phases) below.
 ### Live demo dashboard
 
 ```bash
+python scripts/export_voe_demo_pairs.py
 python scripts/sync_viz_fixtures.py --jepa-run paper_mid --pixel-run paper_mid
 cd viz/dashboard && npm install && npm run dev
-# → http://localhost:5173
+# → http://localhost:5173  (VoE Replay tab = side-by-side possible/impossible)
 ```
+
+**Deploy to Vercel:** see [`docs/DEPLOY.md`](docs/DEPLOY.md) — static SPA, no server env vars.
 
 Tabs: Comparison · VoE · Probes · Ablations · Training · Episode replay.
 

@@ -90,7 +90,27 @@ export interface EpisodeMeta {
   trajectory: { t: number; bodies: EpisodeBody[] }[];
 }
 
-export type TabId = "compare" | "voe" | "probes" | "train" | "episode" | "ablations";
+export type TabId =
+  | "compare"
+  | "voe"
+  | "voe_replay"
+  | "probes"
+  | "train"
+  | "episode"
+  | "ablations";
+
+export interface VoEDemoEntry {
+  pair_id: string;
+  violation_type: string;
+  t_star: number;
+  base: string;
+  description?: string | null;
+}
+
+export interface VoEDemoIndex {
+  schema_version: number;
+  pairs: VoEDemoEntry[];
+}
 
 export interface OcclusionAblationRow {
   label: string;

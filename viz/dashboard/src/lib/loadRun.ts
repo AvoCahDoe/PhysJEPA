@@ -20,6 +20,11 @@ export const paths = {
   episodeFrame: (t: number) =>
     `${param("episode_base", "/fixtures/sample_episode")}/frames/${String(t).padStart(6, "0")}.png`,
   ablations: () => param("ablations", "/fixtures/sample_ablations.json"),
+  voeDemoIndex: () => param("voe_demo", "/fixtures/voe_demo/index.json"),
+  voeDemoMeta: (base: string, branch: "possible" | "impossible") =>
+    `${param("voe_demo_base", "/fixtures/voe_demo")}/${base}/${branch}/meta.json`,
+  voeDemoFrame: (base: string, branch: "possible" | "impossible", t: number) =>
+    `${param("voe_demo_base", "/fixtures/voe_demo")}/${base}/${branch}/frames/${String(t).padStart(6, "0")}.png`,
 };
 
 export function violationTypes(doc: { by_type: Record<string, unknown> }): string[] {

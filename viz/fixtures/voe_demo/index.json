@@ -1,0 +1,33 @@
+{
+  "schema_version": 1,
+  "pairs": [
+    {
+      "pair_id": "teleport_occlusion_s9001",
+      "violation_type": "teleport_occlusion",
+      "t_star": 12,
+      "base": "teleport_occlusion_s9001",
+      "description": "Object teleports while fully occluded"
+    },
+    {
+      "pair_id": "pass_through_wall_s9001",
+      "violation_type": "pass_through_wall",
+      "t_star": 10,
+      "base": "pass_through_wall_s9001",
+      "description": "Object passes through a solid wall at t_star"
+    },
+    {
+      "pair_id": "stop_without_collision_s9001",
+      "violation_type": "stop_without_collision",
+      "t_star": 11,
+      "base": "stop_without_collision_s9001",
+      "description": "Object velocity zeroed mid-flight with no contact"
+    },
+    {
+      "pair_id": "impossible_bounce_s9001",
+      "violation_type": "impossible_bounce",
+      "t_star": 12,
+      "base": "impossible_bounce_s9001",
+      "description": "Velocity / mass swap with no contact"
+    }
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "pair_id": "pass_through_wall_s9001",
+  "violation_type": "pass_through_wall",
+  "t_star": 10,
+  "matched_seed": 9001,
+  "description": "Object passes through a solid wall at t_star",
+  "occlusion_frames": null,
+  "possible": "possible",
+  "impossible": "impossible"
+}

@@ -1,0 +1,8 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "buildCommand": "cd viz/dashboard && npm ci && npm run build",
+  "outputDirectory": "viz/dashboard/dist",
+  "installCommand": "cd viz/dashboard && npm ci",
+  "framework": "vite",
+  "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }]
+}

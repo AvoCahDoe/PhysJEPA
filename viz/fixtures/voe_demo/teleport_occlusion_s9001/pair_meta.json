@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "pair_id": "teleport_occlusion_s9001",
+  "violation_type": "teleport_occlusion",
+  "t_star": 12,
+  "matched_seed": 9001,
+  "description": "Object teleports while fully occluded",
+  "occlusion_frames": 13,
+  "possible": "possible",
+  "impossible": "impossible"
+}

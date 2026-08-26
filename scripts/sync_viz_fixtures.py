@@ -82,6 +82,13 @@ def main() -> None:
     else:
         print(f"skip missing {ep}")
 
+    voe_demo = VIZ / "voe_demo"
+    if voe_demo.exists():
+        copy_tree(voe_demo, OUT / "voe_demo")
+        print(f"copied {voe_demo} -> voe_demo")
+    else:
+        print(f"skip missing {voe_demo}")
+
     for model, run_id in (("jepa", args.jepa_run), ("pixel", args.pixel_run)):
         src = ROOT / "runs" / model / run_id / "summary.json"
         if src.exists():
