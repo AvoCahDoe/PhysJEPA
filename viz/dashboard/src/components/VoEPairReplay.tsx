@@ -8,6 +8,8 @@ interface VoEPairReplayProps {
   onSelectType: (t: string) => void;
   onTimeChange?: (t: number) => void;
   compact?: boolean;
+  /** Start from t=0 and auto-play when the pair loads (e.g. /play route). */
+  autoPlay?: boolean;
 }
 
 function PairPanel({
@@ -60,6 +62,7 @@ export function VoEPairReplay({
   onSelectType,
   onTimeChange,
   compact = false,
+  autoPlay = false,
 }: VoEPairReplayProps) {
   const entry = useMemo(
     () => index.find((p) => p.violation_type === selectedType) ?? index[0],
@@ -69,12 +72,28 @@ export function VoEPairReplay({
   const [possible, setPossible] = useState<EpisodeMeta | null>(null);
   const [impossible, setImpossible] = useState<EpisodeMeta | null>(null);
   const [t, setT] = useState(0);
+  const [isPlaying, setIsPlaying] = useState(false);
   const [loadErr, setLoadErr] = useState<string | null>(null);
+
+  const T = possible?.T ?? impossible?.T ?? 1;
+  const tStar = entry?.t_star ?? 0;
+  const fps = possible?.fps ?? 12;
+
+  const setTAndNotify = useCallback(
+    (next: number) => {
+      setT(next);
+      onTimeChange?.(next);
+    },
+    [onTimeChange]
+  );
+
+  const clamp = useCallback((v: number) => Math.max(0, Math.min(T - 1, v)), [T]);
 
   useEffect(() => {
     if (!entry) return;
     let cancelled = false;
     setLoadErr(null);
+    setIsPlaying(false);
     (async () => {
       try {
         const [poss, imposs] = await Promise.all([
@@ -84,9 +103,17 @@ export function VoEPairReplay({
         if (cancelled) return;
         setPossible(poss);
         setImpossible(imposs);
-        const initT = Math.min(entry.t_star, poss.T - 1);
-        setT(initT);
-        onTimeChange?.(initT);
+
+        const initT = autoPlay ? 0 : Math.min(entry.t_star, poss.T - 1);
+        setTAndNotify(initT);
+        if (autoPlay) setIsPlaying(true);
+
+        for (let i = 0; i < poss.T; i++) {
+          for (const branch of ["possible", "impossible"] as const) {
+            const img = new Image();
+            img.src = paths.voeDemoFrame(entry.base, branch, i);
+          }
+        }
       } catch (e) {
         if (!cancelled) {
           setLoadErr(e instanceof Error ? e.message : String(e));
@@ -96,33 +123,62 @@ export function VoEPairReplay({
     return () => {
       cancelled = true;
     };
-  }, [entry]);
+  }, [entry, autoPlay, setTAndNotify]);
 
-  const T = possible?.T ?? impossible?.T ?? 1;
-  const tStar = entry?.t_star ?? 0;
+  useEffect(() => {
+    if (!isPlaying || T <= 1) return;
+    const intervalMs = 1000 / fps;
+    const id = window.setInterval(() => {
+      setT((prev) => {
+        if (prev >= T - 1) {
+          setIsPlaying(false);
+          return prev;
+        }
+        const next = prev + 1;
+        onTimeChange?.(next);
+        return next;
+      });
+    }, intervalMs);
+    return () => window.clearInterval(id);
+  }, [isPlaying, T, fps, onTimeChange]);
 
-  const clamp = useCallback((v: number) => Math.max(0, Math.min(T - 1, v)), [T]);
+  const handlePlayPause = useCallback(() => {
+    setIsPlaying((playing) => {
+      if (playing) return false;
+      setT((prev) => {
+        if (prev >= T - 1) {
+          onTimeChange?.(0);
+          return 0;
+        }
+        return prev;
+      });
+      return true;
+    });
+  }, [T, onTimeChange]);
+
+  const handleRestart = useCallback(() => {
+    setIsPlaying(true);
+    setTAndNotify(0);
+  }, [setTAndNotify]);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
+      if (e.key === " ") {
+        e.preventDefault();
+        handlePlayPause();
+        return;
+      }
+      if (isPlaying) return;
       if (e.key === "ArrowLeft") {
-        setT((x) => {
-          const next = clamp(x - 1);
-          onTimeChange?.(next);
-          return next;
-        });
+        setTAndNotify(clamp(t - 1));
       }
       if (e.key === "ArrowRight") {
-        setT((x) => {
-          const next = clamp(x + 1);
-          onTimeChange?.(next);
-          return next;
-        });
+        setTAndNotify(clamp(t + 1));
       }
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [clamp]);
+  }, [clamp, isPlaying, t, setTAndNotify, handlePlayPause]);
 
   if (!entry) {
     return <p className="hint">No VoE demo pairs loaded.</p>;
@@ -185,6 +241,24 @@ export function VoEPairReplay({
         />
       </div>
 
+      <div className="replay-controls">
+        <button
+          type="button"
+          className="btn-play"
+          onClick={handlePlayPause}
+          aria-label={isPlaying ? "Pause" : "Play"}
+        >
+          {isPlaying ? "Pause" : "Play"}
+        </button>
+        <button type="button" className="btn-replay" onClick={handleRestart}>
+          Restart
+        </button>
+        <span className="replay-progress">
+          Frame {t + 1} / {T}
+          {isPlaying && <span className="chip chip-live">playing</span>}
+        </span>
+      </div>
+
       <div className="timeline-wrap">
         <label htmlFor="pair-slider">
           t = {t}
@@ -196,10 +270,10 @@ export function VoEPairReplay({
           min={0}
           max={T - 1}
           value={t}
+          disabled={isPlaying}
           onChange={(e) => {
-            const next = Number(e.target.value);
-            setT(next);
-            onTimeChange?.(next);
+            setIsPlaying(false);
+            setTAndNotify(Number(e.target.value));
           }}
         />
         <div className="timeline-markers">

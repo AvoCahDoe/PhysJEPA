@@ -778,6 +778,58 @@ code {
   accent-color: var(--accent);
 }
 
+.timeline-wrap input[type="range"]:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.replay-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.85rem;
+}
+
+.btn-play {
+  padding: 0.5rem 1.1rem;
+  border-radius: 8px;
+  border: none;
+  background: linear-gradient(135deg, #5b9bd5, #4a7fb8);
+  color: #fff;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  min-width: 5.5rem;
+}
+
+.btn-play:hover {
+  filter: brightness(1.08);
+}
+
+.btn-replay {
+  padding: 0.5rem 0.85rem;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: #12151a;
+  color: #ccc;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+.btn-replay:hover {
+  border-color: #555;
+  color: #fff;
+}
+
+.replay-progress {
+  color: var(--muted);
+  font-size: 0.85rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
 .star-badge {
   color: var(--gold);
   font-weight: 600;

@@ -5,7 +5,11 @@ import { VoEPairReplay } from "../components/VoEPairReplay";
 import { DEFAULT_VOE_TYPE, useFixtures } from "../hooks/useFixtures";
 import { violationTypes } from "../lib/loadRun";
 
-export function TryPage() {
+interface TryPageProps {
+  autoPlay?: boolean;
+}
+
+export function TryPage({ autoPlay = false }: TryPageProps) {
   const { data, loading, error } = useFixtures();
   const [voeType, setVoeType] = useState(DEFAULT_VOE_TYPE);
   const [currentT, setCurrentT] = useState(0);
@@ -47,6 +51,7 @@ export function TryPage() {
               onSelectType={setVoeType}
               onTimeChange={setCurrentT}
               compact
+              autoPlay={autoPlay}
             />
           ) : (
             <section className="panel">
@@ -82,8 +87,11 @@ export function TryPage() {
             <strong>t*</strong> — strongest for impossible bounce in our mid-scale run.
           </li>
           <li>
-            Use ← → arrow keys or the slider. Compare aggregate metrics on{" "}
-            <Link to="/results">Results</Link>.
+            Hit <strong>Play</strong> (or space) to run the full rollout from start to finish.
+            Use ← → or the slider when paused.
+          </li>
+          <li>
+            Compare aggregate metrics on <Link to="/results">Results</Link>.
           </li>
         </ul>
       </section>
@@ -91,5 +99,7 @@ export function TryPage() {
   );
 }
 
-/** Alias route — same component */
-export const PlayPage = TryPage;
+/** /play — auto-starts the full animation on load */
+export function PlayPage() {
+  return <TryPage autoPlay />;
+}
