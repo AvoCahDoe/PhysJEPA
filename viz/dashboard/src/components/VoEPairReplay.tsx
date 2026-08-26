@@ -2,6 +2,10 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import type { EpisodeMeta, VoEDemoEntry } from "../types/schema";
 import { fetchJson, formatViolationLabel, paths } from "../lib/loadRun";
 
+/** User-selectable playback speeds (frames per second). */
+const PLAYBACK_SPEEDS = [1, 2, 4] as const;
+type PlaybackSpeed = (typeof PLAYBACK_SPEEDS)[number];
+
 interface VoEPairReplayProps {
   index: VoEDemoEntry[];
   selectedType: string;
@@ -73,11 +77,11 @@ export function VoEPairReplay({
   const [impossible, setImpossible] = useState<EpisodeMeta | null>(null);
   const [t, setT] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
+  const [playbackFps, setPlaybackFps] = useState<PlaybackSpeed>(2);
   const [loadErr, setLoadErr] = useState<string | null>(null);
 
   const T = possible?.T ?? impossible?.T ?? 1;
   const tStar = entry?.t_star ?? 0;
-  const fps = possible?.fps ?? 12;
 
   const setTAndNotify = useCallback(
     (next: number) => {
@@ -127,7 +131,7 @@ export function VoEPairReplay({
 
   useEffect(() => {
     if (!isPlaying || T <= 1) return;
-    const intervalMs = 1000 / fps;
+    const intervalMs = 1000 / playbackFps;
     const id = window.setInterval(() => {
       setT((prev) => {
         if (prev >= T - 1) {
@@ -140,7 +144,7 @@ export function VoEPairReplay({
       });
     }, intervalMs);
     return () => window.clearInterval(id);
-  }, [isPlaying, T, fps, onTimeChange]);
+  }, [isPlaying, T, playbackFps, onTimeChange]);
 
   const handlePlayPause = useCallback(() => {
     setIsPlaying((playing) => {
@@ -257,6 +261,20 @@ export function VoEPairReplay({
           Frame {t + 1} / {T}
           {isPlaying && <span className="chip chip-live">playing</span>}
         </span>
+        <div className="speed-control" role="group" aria-label="Playback speed">
+          <span className="speed-label">Speed</span>
+          {PLAYBACK_SPEEDS.map((speed) => (
+            <button
+              key={speed}
+              type="button"
+              className={`speed-btn ${playbackFps === speed ? "active" : ""}`}
+              onClick={() => setPlaybackFps(speed)}
+              aria-pressed={playbackFps === speed}
+            >
+              {speed} fps
+            </button>
+          ))}
+        </div>
       </div>
 
       <div className="timeline-wrap">

@@ -830,6 +830,48 @@ code {
   gap: 0.5rem;
 }
 
+.speed-control {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin-left: auto;
+}
+
+.speed-label {
+  color: var(--muted);
+  font-size: 0.8rem;
+  margin-right: 0.15rem;
+}
+
+.speed-btn {
+  padding: 0.35rem 0.55rem;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: #12151a;
+  color: var(--muted);
+  font-size: 0.78rem;
+  cursor: pointer;
+  font-variant-numeric: tabular-nums;
+}
+
+.speed-btn:hover {
+  border-color: #555;
+  color: #ddd;
+}
+
+.speed-btn.active {
+  background: #5b9bd522;
+  border-color: #5b9bd555;
+  color: #fff;
+}
+
+@media (max-width: 640px) {
+  .speed-control {
+    margin-left: 0;
+    width: 100%;
+  }
+}
+
 .star-badge {
   color: var(--gold);
   font-weight: 600;

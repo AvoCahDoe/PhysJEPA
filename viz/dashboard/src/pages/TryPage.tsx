@@ -87,8 +87,8 @@ export function TryPage({ autoPlay = false }: TryPageProps) {
             <strong>t*</strong> — strongest for impossible bounce in our mid-scale run.
           </li>
           <li>
-            Hit <strong>Play</strong> (or space) to run the full rollout from start to finish.
-            Use ← → or the slider when paused.
+            Hit <strong>Play</strong> (or space) to run the full rollout. Choose speed:{" "}
+            <strong>1 · 2 · 4 fps</strong>. Use ← → or the slider when paused.
           </li>
           <li>
             Compare aggregate metrics on <Link to="/results">Results</Link>.
