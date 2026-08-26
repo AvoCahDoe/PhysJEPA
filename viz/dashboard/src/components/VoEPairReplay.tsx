@@ -6,6 +6,8 @@ interface VoEPairReplayProps {
   index: VoEDemoEntry[];
   selectedType: string;
   onSelectType: (t: string) => void;
+  onTimeChange?: (t: number) => void;
+  compact?: boolean;
 }
 
 function PairPanel({
@@ -56,6 +58,8 @@ export function VoEPairReplay({
   index,
   selectedType,
   onSelectType,
+  onTimeChange,
+  compact = false,
 }: VoEPairReplayProps) {
   const entry = useMemo(
     () => index.find((p) => p.violation_type === selectedType) ?? index[0],
@@ -80,7 +84,9 @@ export function VoEPairReplay({
         if (cancelled) return;
         setPossible(poss);
         setImpossible(imposs);
-        setT(Math.min(entry.t_star, poss.T - 1));
+        const initT = Math.min(entry.t_star, poss.T - 1);
+        setT(initT);
+        onTimeChange?.(initT);
       } catch (e) {
         if (!cancelled) {
           setLoadErr(e instanceof Error ? e.message : String(e));
@@ -99,8 +105,20 @@ export function VoEPairReplay({
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === "ArrowLeft") setT((x) => clamp(x - 1));
-      if (e.key === "ArrowRight") setT((x) => clamp(x + 1));
+      if (e.key === "ArrowLeft") {
+        setT((x) => {
+          const next = clamp(x - 1);
+          onTimeChange?.(next);
+          return next;
+        });
+      }
+      if (e.key === "ArrowRight") {
+        setT((x) => {
+          const next = clamp(x + 1);
+          onTimeChange?.(next);
+          return next;
+        });
+      }
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
@@ -119,12 +137,16 @@ export function VoEPairReplay({
   }
 
   return (
-    <section className="panel voe-replay-panel">
-      <h2>VoE pair replay</h2>
-      <p className="hint">
-        Matched possible vs impossible rollouts · shared timeline ·{" "}
-        <strong>t*={tStar}</strong> is the violation · ← → keys
-      </p>
+    <section className={`panel voe-replay-panel ${compact ? "compact" : ""}`}>
+      {!compact && (
+        <>
+          <h2>VoE pair replay</h2>
+          <p className="hint">
+            Matched possible vs impossible rollouts · shared timeline ·{" "}
+            <strong>t*={tStar}</strong> is the violation · ← → keys
+          </p>
+        </>
+      )}
 
       <div className="selector-row">
         <label htmlFor="voe-replay-type">Violation</label>
@@ -174,7 +196,11 @@ export function VoEPairReplay({
           min={0}
           max={T - 1}
           value={t}
-          onChange={(e) => setT(Number(e.target.value))}
+          onChange={(e) => {
+            const next = Number(e.target.value);
+            setT(next);
+            onTimeChange?.(next);
+          }}
         />
         <div className="timeline-markers">
           <span>0</span>

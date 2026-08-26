@@ -1,136 +1,24 @@
-import { useEffect, useState } from "react";
-import { AblationsPanel } from "./components/AblationsPanel";
-import { ComparisonOverview } from "./components/ComparisonOverview";
-import { EpisodePlayer } from "./components/EpisodePlayer";
-import { Layout } from "./components/Layout";
-import { ProbeComparison } from "./components/ProbeComparison";
-import { TrainingCurves } from "./components/TrainingCurves";
-import { VoEPairReplay } from "./components/VoEPairReplay";
-import { VoESurprisePanel } from "./components/VoESurpriseChart";
-import { fetchJson, paths, violationTypes } from "./lib/loadRun";
-import type {
-  AblationsDoc,
-  ComparisonDoc,
-  EpisodeMeta,
-  TabId,
-  TrainingSummary,
-  VoEDemoIndex,
-  VoESurpriseDoc,
-} from "./types/schema";
+import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
+import { AppShell } from "./components/AppShell";
+import { DocsPage } from "./pages/DocsPage";
+import { HomePage } from "./pages/HomePage";
+import { PlayPage, TryPage } from "./pages/TryPage";
+import { ResultsPage } from "./pages/ResultsPage";
 import "./index.css";
 
-const DEFAULT_VOE_TYPE = "impossible_bounce";
-
 export default function App() {
-  const [tab, setTab] = useState<TabId>("compare");
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  const [comparison, setComparison] = useState<ComparisonDoc | null>(null);
-  const [voe, setVoe] = useState<VoESurpriseDoc | null>(null);
-  const [jepaSummary, setJepaSummary] = useState<TrainingSummary | null>(null);
-  const [pixelSummary, setPixelSummary] = useState<TrainingSummary | null>(null);
-  const [episode, setEpisode] = useState<EpisodeMeta | null>(null);
-  const [ablations, setAblations] = useState<AblationsDoc | null>(null);
-  const [voeDemo, setVoeDemo] = useState<VoEDemoIndex | null>(null);
-  const [voeType, setVoeType] = useState(DEFAULT_VOE_TYPE);
-
-  useEffect(() => {
-    let cancelled = false;
-    (async () => {
-      try {
-        const [cmp, voeDoc, jepa, pixel, ep, abl, demo] = await Promise.all([
-          fetchJson<ComparisonDoc>(paths.comparison()),
-          fetchJson<VoESurpriseDoc>(paths.voeEval()),
-          fetchJson<TrainingSummary>(paths.jepaSummary()),
-          fetchJson<TrainingSummary>(paths.pixelSummary()),
-          fetchJson<EpisodeMeta>(paths.episodeMeta()),
-          fetchJson<AblationsDoc>(paths.ablations()).catch(() => null),
-          fetchJson<VoEDemoIndex>(paths.voeDemoIndex()).catch(() => null),
-        ]);
-        if (cancelled) return;
-        setComparison(cmp);
-        setVoe(voeDoc);
-        setJepaSummary(jepa);
-        setPixelSummary(pixel);
-        setEpisode(ep);
-        setAblations(abl);
-        setVoeDemo(demo);
-        const types = violationTypes(voeDoc);
-        if (types.includes(DEFAULT_VOE_TYPE)) {
-          setVoeType(DEFAULT_VOE_TYPE);
-        } else if (types.length > 0) {
-          setVoeType(types[0]);
-        }
-        setLoading(false);
-      } catch (e) {
-        if (!cancelled) {
-          setError(e instanceof Error ? e.message : String(e));
-          setLoading(false);
-        }
-      }
-    })();
-    return () => {
-      cancelled = true;
-    };
-  }, []);
-
-  let content = null;
-  if (comparison && voe && jepaSummary && pixelSummary && episode) {
-    switch (tab) {
-      case "compare":
-        content = <ComparisonOverview data={comparison} />;
-        break;
-      case "voe":
-        content = (
-          <VoESurprisePanel
-            byType={voe.by_type}
-            selected={voeType}
-            onSelect={setVoeType}
-          />
-        );
-        break;
-      case "voe_replay":
-        content = voeDemo?.pairs?.length ? (
-          <VoEPairReplay
-            index={voeDemo.pairs}
-            selectedType={voeType}
-            onSelectType={setVoeType}
-          />
-        ) : (
-          <p className="hint">
-            No VoE demo pairs. Run{" "}
-            <code>python scripts/export_voe_demo_pairs.py</code> then sync
-            fixtures.
-          </p>
-        );
-        break;
-      case "probes":
-        content = <ProbeComparison data={comparison} />;
-        break;
-      case "ablations":
-        content = ablations ? (
-          <AblationsPanel data={ablations} />
-        ) : (
-          <p className="hint">
-            No ablations fixture yet. Run{" "}
-            <code>python scripts/run_ablations.py</code> then{" "}
-            <code>python scripts/sync_viz_fixtures.py</code>.
-          </p>
-        );
-        break;
-      case "train":
-        content = <TrainingCurves jepa={jepaSummary} pixel={pixelSummary} />;
-        break;
-      case "episode":
-        content = <EpisodePlayer meta={episode} />;
-        break;
-    }
-  }
-
   return (
-    <Layout active={tab} onTab={setTab} loading={loading} error={error}>
-      {content}
-    </Layout>
+    <BrowserRouter>
+      <Routes>
+        <Route element={<AppShell />}>
+          <Route index element={<HomePage />} />
+          <Route path="docs" element={<DocsPage />} />
+          <Route path="try" element={<TryPage />} />
+          <Route path="play" element={<PlayPage />} />
+          <Route path="results" element={<ResultsPage />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Route>
+      </Routes>
+    </BrowserRouter>
   );
 }
