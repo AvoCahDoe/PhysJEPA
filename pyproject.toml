@@ -1,0 +1,60 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "physjepa"
+version = "0.1.0"
+description = "Controlled 2D physics + VoE probes for JEPA physics diagnostics"
+readme = "README.md"
+license = { text = "MIT" }
+requires-python = ">=3.11"
+authors = [
+  { name = "Farid El Boubkraoui", email = "farid.elboubkraoui@w-ays.de" },
+]
+maintainers = [
+  { name = "Farid El Boubkraoui", email = "farid.elboubkraoui@w-ays.de" },
+]
+keywords = [
+  "jepa",
+  "self-supervised-learning",
+  "intuitive-physics",
+  "violation-of-expectation",
+  "world-models",
+  "pymunk",
+  "representation-learning",
+]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Intended Audience :: Science/Research",
+  "License :: OSI Approved :: MIT License",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
+dependencies = [
+  "numpy>=1.24",
+  "Pillow>=10.0",
+  "pymunk>=6.6",
+  "PyYAML>=6.0",
+  "torch>=2.0",
+  "matplotlib>=3.7",
+  "imageio>=2.31",
+]
+
+[project.urls]
+Homepage = "https://github.com/AvoCahDoe/PhysJEPA"
+Repository = "https://github.com/AvoCahDoe/PhysJEPA"
+Documentation = "https://github.com/AvoCahDoe/PhysJEPA/blob/main/docs/report.md"
+Issues = "https://github.com/AvoCahDoe/PhysJEPA/issues"
+
+[project.optional-dependencies]
+dev = ["pytest>=7.0"]
+cuda = []  # install torch separately: pip install torch --index-url https://download.pytorch.org/whl/cu128
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+physjepa = ["py.typed"]

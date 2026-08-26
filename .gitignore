@@ -1,0 +1,29 @@
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+dist/
+build/
+.venv/
+venv/
+.env
+.pytest_cache/
+.mypy_cache/
+data/train/
+data/voe/
+data/voe_occ_*/
+!data/train/.gitkeep
+!data/voe/.gitkeep
+runs/
+*.log
+.DS_Store
+
+# PNGs excluded except demo assets
+*.png
+!docs/figures/**
+!viz/fixtures/**
+!viz/dashboard/public/fixtures/**
+
+# Node
+viz/dashboard/node_modules/
+viz/dashboard/dist/

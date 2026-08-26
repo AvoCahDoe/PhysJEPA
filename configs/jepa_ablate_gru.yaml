@@ -1,0 +1,33 @@
+schema_version: 1
+
+data:
+  train_index: data/train/index.json
+  val_fraction: 0.1
+  seed_max_exclusive: 9000
+  cache_frames: true
+  windows_per_episode: 4
+  num_workers: 0
+
+model:
+  latent_dim: 128
+  base_channels: 16
+  context_len: 4
+  pred_horizon: 1
+  predictor_type: gru
+  predictor_hidden: 256
+  predictor_layers: 1
+  ema_momentum: 0.996
+  ema_final: 1.0
+
+optim:
+  lr: 0.0005
+  weight_decay: 0.05
+  batch_size: 8
+  epochs: 2
+  grad_clip: 1.0
+
+train:
+  log_every: 5
+  device: auto
+  run_root: runs/jepa
+  seed: 0

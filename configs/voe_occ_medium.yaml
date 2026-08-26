@@ -1,0 +1,25 @@
+# Occlusion-duration ablation: MEDIUM (matches default teleport geometry).
+schema_version: 1
+ablation: occlusion_duration
+occlusion_label: medium
+
+sim:
+  T: 24
+  resolution: [64, 64]
+  fps: 30
+
+seeds: [9101, 9102, 9103]
+
+templates:
+  - id: teleport_occ_medium
+    type: teleport_occlusion
+    description: Medium occlusion then teleport
+    t_star: 12
+    teleport_delta: [0.35, 0.0]
+    x0: 0.12
+    vx: 0.95
+    occluder_width: 0.40
+    occluder_height: 0.32
+    occluder_x: 0.50
+    radius: 0.05
+    occlusion_frames_target: 8

@@ -1,0 +1,35 @@
+# Held-out VoE probe templates. Never mixed into train generation.
+schema_version: 1
+
+# Shared sim overrides for probe episodes
+sim:
+  T: 24
+  resolution: [64, 64]
+  fps: 30
+
+# Seeds used only for VoE (kept disjoint from train by script convention)
+seeds: [9001, 9002, 9003, 9004, 9005]
+
+templates:
+  - id: teleport_occlusion
+    type: teleport_occlusion
+    description: Object teleports while fully occluded
+    t_star: 12
+    teleport_delta: [0.35, 0.0]
+
+  - id: pass_through_wall
+    type: pass_through_wall
+    description: Object passes through a solid wall at t_star
+    t_star: 10
+
+  - id: stop_without_collision
+    type: stop_without_collision
+    description: Object velocity zeroed mid-flight with no contact
+    t_star: 11
+
+  - id: impossible_bounce
+    type: impossible_bounce
+    description: Velocity / mass swap with no contact
+    t_star: 12
+    velocity_scale: -1.4
+    mass_scale: 2.0

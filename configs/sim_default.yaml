@@ -1,0 +1,46 @@
+schema_version: 1
+
+world:
+  width: 1.0
+  height: 1.0
+  gravity: [0.0, -9.8]
+  damping: 0.98
+  wall_thickness: 0.02
+  elasticity: 0.85
+  friction: 0.4
+
+render:
+  resolution: [64, 64]
+  supersample: 4
+  background: [18, 22, 28]
+  fps: 30
+  steps_per_frame: 2
+  dt: 0.0166667
+
+episode:
+  T: 24
+  min_objects: 1
+  max_objects: 3
+  mass_range: [0.5, 2.0]
+  speed_range: [0.3, 1.8]
+  disk_radius_range: [0.04, 0.08]
+  box_size_range: [0.06, 0.12]
+  shapes: [disk, box]
+  occluder_prob: 0.7
+  occluder_width_range: [0.18, 0.35]
+  occluder_height_range: [0.12, 0.45]
+  # Reject scenes with almost no motion
+  min_total_displacement: 0.08
+  max_resample_attempts: 40
+
+colors:
+  disks:
+    - [220, 80, 70]
+    - [70, 160, 220]
+    - [240, 190, 60]
+  boxes:
+    - [90, 200, 120]
+    - [180, 100, 220]
+    - [240, 140, 80]
+  occluder: [55, 60, 70]
+  walls: [40, 44, 52]

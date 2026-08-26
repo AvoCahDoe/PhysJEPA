@@ -1,0 +1,25 @@
+# Occlusion-duration ablation: LONG — wide occluder + slow ball.
+schema_version: 1
+ablation: occlusion_duration
+occlusion_label: long
+
+sim:
+  T: 32
+  resolution: [64, 64]
+  fps: 30
+
+seeds: [9101, 9102, 9103]
+
+templates:
+  - id: teleport_occ_long
+    type: teleport_occlusion
+    description: Long occlusion then teleport
+    t_star: 18
+    teleport_delta: [0.40, 0.0]
+    x0: 0.08
+    vx: 0.55
+    occluder_width: 0.58
+    occluder_height: 0.36
+    occluder_x: 0.50
+    radius: 0.05
+    occlusion_frames_target: 16

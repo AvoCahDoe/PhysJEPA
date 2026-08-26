@@ -1,0 +1,26 @@
+# Occlusion-duration ablation: SHORT teleport-under-occluder probes.
+# Narrow occluder + faster ball => brief invisibility around t_star.
+schema_version: 1
+ablation: occlusion_duration
+occlusion_label: short
+
+sim:
+  T: 24
+  resolution: [64, 64]
+  fps: 30
+
+seeds: [9101, 9102, 9103]
+
+templates:
+  - id: teleport_occ_short
+    type: teleport_occlusion
+    description: Short occlusion then teleport
+    t_star: 8
+    teleport_delta: [0.22, 0.0]
+    x0: 0.18
+    vx: 1.55
+    occluder_width: 0.18
+    occluder_height: 0.28
+    occluder_x: 0.48
+    radius: 0.045
+    occlusion_frames_target: 3

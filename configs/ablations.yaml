@@ -1,0 +1,39 @@
+schema_version: 1
+
+# Ablation defaults (overridden by CLI / run_ablations.py)
+data:
+  train_index: data/train/index.json
+  voe_index: data/voe/index.json
+  val_fraction: 0.1
+  seed_max_exclusive: 9000
+
+occlusion:
+  labels: [short, medium, long]
+  configs:
+    short: configs/voe_occ_short.yaml
+    medium: configs/voe_occ_medium.yaml
+    long: configs/voe_occ_long.yaml
+  out_dirs:
+    short: data/voe_occ_short
+    medium: data/voe_occ_medium
+    long: data/voe_occ_long
+
+architecture:
+  predictors: [mlp, gru, transformer]
+  configs:
+    mlp: configs/jepa_ablate_mlp.yaml
+    gru: configs/jepa_ablate_gru.yaml
+    transformer: configs/jepa_ablate_transformer.yaml
+  # Use existing smoke JEPA as mlp baseline when present
+  reuse_mlp_ckpt: runs/jepa/smoke_short/ckpt_last.pt
+
+train:
+  epochs: 2
+  batch_size: 8
+  device: auto
+
+eval:
+  spike_window: 3
+  probe_epochs: 10
+
+out: runs/ablations.json

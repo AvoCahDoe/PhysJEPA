@@ -1,0 +1,199 @@
+{
+  "schema_version": 1,
+  "occlusion_duration": {
+    "description": "JEPA VoE spike vs occlusion length (teleport under occluder)",
+    "results": [
+      {
+        "label": "short",
+        "voe_dir": "C:\\Users\\wombi\\Desktop\\WM_Project\\data\\voe_occ_short",
+        "mean_occlusion_frames": 3.0,
+        "spike_score": 0.001526628931363433,
+        "pre_tstar_abs_gap": 0.006615385413169861,
+        "t_star": 8,
+        "ckpt": "C:\\Users\\wombi\\Desktop\\WM_Project\\runs\\jepa\\paper_mid\\ckpt_last.pt"
+      },
+      {
+        "label": "medium",
+        "voe_dir": "C:\\Users\\wombi\\Desktop\\WM_Project\\data\\voe_occ_medium",
+        "mean_occlusion_frames": 13.0,
+        "spike_score": -0.016784250736236572,
+        "pre_tstar_abs_gap": 0.0009846422407362196,
+        "t_star": 12,
+        "ckpt": "C:\\Users\\wombi\\Desktop\\WM_Project\\runs\\jepa\\paper_mid\\ckpt_last.pt"
+      },
+      {
+        "label": "long",
+        "voe_dir": "C:\\Users\\wombi\\Desktop\\WM_Project\\data\\voe_occ_long",
+        "mean_occlusion_frames": 24.0,
+        "spike_score": -0.00224488228559494,
+        "pre_tstar_abs_gap": 0.0002500618497530619,
+        "t_star": 18,
+        "ckpt": "C:\\Users\\wombi\\Desktop\\WM_Project\\runs\\jepa\\paper_mid\\ckpt_last.pt"
+      }
+    ]
+  },
+  "architecture": {
+    "description": "Predictor type vs VoE spike + linear probes (same data)",
+    "results": [
+      {
+        "predictor_type": "mlp",
+        "ckpt": "C:\\Users\\wombi\\Desktop\\WM_Project\\runs\\jepa\\paper_mid\\ckpt_last.pt",
+        "mean_voe_spike": 0.0013297510643800123,
+        "voe_by_type": {
+          "teleport_occlusion": {
+            "spike_score": -0.016784250736236572,
+            "pre_tstar_abs_gap": 0.0009846422407362196,
+            "t_star": 12,
+            "n_pairs": 5
+          },
+          "pass_through_wall": {
+            "spike_score": 0.0,
+            "pre_tstar_abs_gap": 0.0,
+            "t_star": 10,
+            "n_pairs": 5
+          },
+          "stop_without_collision": {
+            "spike_score": -0.006951401631037385,
+            "pre_tstar_abs_gap": 0.0,
+            "t_star": 11,
+            "n_pairs": 5
+          },
+          "impossible_bounce": {
+            "spike_score": 0.029054656624794006,
+            "pre_tstar_abs_gap": 0.0,
+            "t_star": 12,
+            "n_pairs": 5
+          }
+        },
+        "probes": {
+          "xy": {
+            "val_r2": 0.3865395675657407,
+            "val_acc": null,
+            "val_mse": 0.033005595207214355
+          },
+          "vxvy": {
+            "val_r2": 0.013074730660757816,
+            "val_acc": null,
+            "val_mse": 1.1504724025726318
+          },
+          "mass": {
+            "val_r2": -0.03400431651666391,
+            "val_acc": null,
+            "val_mse": 0.17347493767738342
+          },
+          "visible": {
+            "val_r2": null,
+            "val_acc": 0.9395833333333333,
+            "val_mse": null
+          }
+        }
+      },
+      {
+        "predictor_type": "gru",
+        "ckpt": "C:\\Users\\wombi\\Desktop\\WM_Project\\runs\\jepa\\ablate_gru\\ckpt_last.pt",
+        "mean_voe_spike": 0.0031523938911656524,
+        "voe_by_type": {
+          "teleport_occlusion": {
+            "spike_score": 0.011202389995257057,
+            "pre_tstar_abs_gap": 0.008488213850392235,
+            "t_star": 12,
+            "n_pairs": 5
+          },
+          "pass_through_wall": {
+            "spike_score": 0.0,
+            "pre_tstar_abs_gap": 0.0,
+            "t_star": 10,
+            "n_pairs": 5
+          },
+          "stop_without_collision": {
+            "spike_score": -0.0011927802115678787,
+            "pre_tstar_abs_gap": 0.0,
+            "t_star": 11,
+            "n_pairs": 5
+          },
+          "impossible_bounce": {
+            "spike_score": 0.002599965780973431,
+            "pre_tstar_abs_gap": 0.0,
+            "t_star": 12,
+            "n_pairs": 5
+          }
+        },
+        "probes": {
+          "xy": {
+            "val_r2": 0.3062255705344116,
+            "val_acc": null,
+            "val_mse": 0.03732667118310928
+          },
+          "vxvy": {
+            "val_r2": 0.009984001826268352,
+            "val_acc": null,
+            "val_mse": 1.154075264930725
+          },
+          "mass": {
+            "val_r2": -0.05251307187858223,
+            "val_acc": null,
+            "val_mse": 0.17658014595508575
+          },
+          "visible": {
+            "val_r2": null,
+            "val_acc": 0.9395833333333333,
+            "val_mse": null
+          }
+        }
+      },
+      {
+        "predictor_type": "transformer",
+        "ckpt": "C:\\Users\\wombi\\Desktop\\WM_Project\\runs\\jepa\\ablate_transformer\\ckpt_last.pt",
+        "mean_voe_spike": 0.006262871126333877,
+        "voe_by_type": {
+          "teleport_occlusion": {
+            "spike_score": -0.014575113852818816,
+            "pre_tstar_abs_gap": 0.0011197361681196424,
+            "t_star": 12,
+            "n_pairs": 5
+          },
+          "pass_through_wall": {
+            "spike_score": 0.0,
+            "pre_tstar_abs_gap": 0.0,
+            "t_star": 10,
+            "n_pairs": 5
+          },
+          "stop_without_collision": {
+            "spike_score": -0.010414575537045778,
+            "pre_tstar_abs_gap": 0.0,
+            "t_star": 11,
+            "n_pairs": 5
+          },
+          "impossible_bounce": {
+            "spike_score": 0.0500411738952001,
+            "pre_tstar_abs_gap": 0.0,
+            "t_star": 12,
+            "n_pairs": 5
+          }
+        },
+        "probes": {
+          "xy": {
+            "val_r2": 0.4226942017327764,
+            "val_acc": null,
+            "val_mse": 0.031060390174388885
+          },
+          "vxvy": {
+            "val_r2": 0.011924761024389219,
+            "val_acc": null,
+            "val_mse": 1.1518129110336304
+          },
+          "mass": {
+            "val_r2": -0.07158420527192266,
+            "val_acc": null,
+            "val_mse": 0.17977970838546753
+          },
+          "visible": {
+            "val_r2": null,
+            "val_acc": 0.9395833333333333,
+            "val_mse": null
+          }
+        }
+      }
+    ]
+  }
+}

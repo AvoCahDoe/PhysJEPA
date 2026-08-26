@@ -1,0 +1,26 @@
+cff-version: 1.2.0
+title: PhysJEPA
+message: >-
+  If you use this software, please cite it using the metadata from this file.
+type: software
+authors:
+  - family-names: El Boubkraoui
+    given-names: Farid
+    email: farid.elboubkraoui@w-ays.de
+repository-code: https://github.com/AvoCahDoe/PhysJEPA
+url: https://github.com/AvoCahDoe/PhysJEPA
+license: MIT
+version: 0.1.0
+date-released: 2026-08-26
+keywords:
+  - jepa
+  - self-supervised-learning
+  - intuitive-physics
+  - violation-of-expectation
+  - world-models
+  - pymunk
+  - representation-learning
+abstract: >-
+  Controlled 2D physics diagnostic testing whether JEPA-style latent prediction
+  encodes naive physics better than pixel reconstruction, using linear probes and
+  violation-of-expectation surprise curves.

@@ -1,0 +1,31 @@
+schema_version: 1
+
+data:
+  train_index: data/train/index.json
+  val_fraction: 0.1
+  seed_max_exclusive: 9000
+  cache_frames: true
+  windows_per_episode: 4
+  num_workers: 0
+
+model:
+  latent_dim: 256
+  base_channels: 32
+  context_len: 4
+  pred_horizon: 1
+  predictor_hidden: 512
+  predictor_layers: 3
+  decoder_channels: 256
+
+optim:
+  lr: 0.0003
+  weight_decay: 0.05
+  batch_size: 16
+  epochs: 80
+  grad_clip: 1.0
+
+train:
+  log_every: 10
+  device: auto
+  run_root: runs/pixel
+  seed: 0

@@ -1,0 +1,27 @@
+schema_version: 1
+
+data:
+  train_index: data/train/index.json
+  voe_index: data/voe/index.json
+  val_fraction: 0.1
+  seed_max_exclusive: 9000
+
+checkpoint:
+  # Override via CLI --ckpt
+  path: runs/jepa/smoke_short/ckpt_last.pt
+  config: configs/jepa_default.yaml
+
+probes:
+  body_id: 0
+  epochs: 30
+  lr: 0.001
+  batch_size: 64
+  targets: [xy, vxvy, mass, visible]
+
+voe:
+  spike_window: 3
+  # null surprise before enough context frames
+
+eval:
+  device: auto
+  out_subdir: eval
