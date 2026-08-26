@@ -16,7 +16,7 @@ We ask a concrete question in a setting we fully control:
 
 > After self-supervised future-latent prediction only (no physics labels), does a JEPA encoder show (i) linearly recoverable physical variables and (ii) elevated prediction error specifically at held-out physical violations — more so than a pixel baseline?
 
-A positive answer would support the JEPA hypothesis in miniature. A null or nuanced answer — characterizing *where* the claim fails — is equally valuable for SOP-style research framing.
+A positive answer would support the JEPA hypothesis in miniature. A null or nuanced answer — characterizing *where* the claim fails — is equally valuable as a controlled falsification study.
 
 ## 2. Related work
 
@@ -151,11 +151,11 @@ Remaining limitations:
 2. Single 64×64 2D domain — not a claim about natural video.  
 3. Architecture ablations use smaller predictors (128-d latent) than main `paper_mid` (256-d).
 
-**SOP story.** A careful partial result — JEPA spikes on impossible bounce but not teleport — shows how to falsify a trendy claim with controlled experiments rather than confirm it wholesale.
+**Key takeaway.** A careful partial result — JEPA spikes on impossible bounce but not teleport — shows how to falsify a trendy claim with controlled experiments rather than confirm it wholesale.
 
-## 7. Conclusion and SOP framing
+## 7. Conclusion
 
-We designed a controlled diagnostic of the claim that **latent-space prediction induces physical abstractions that pixel-space prediction does not**, using developmental-psychology VoE methodology in a fully specified 2D physics sandbox. At mid scale (1k episodes, 80 epochs) we found improved position linear probes and a **JEPA-specific VoE spike on impossible bounce**, but not broad object-permanence or pass-through-wall surprise. The repo, dashboard, and figure export path are ready for demos and longer runs.
+We designed a controlled diagnostic of the claim that **latent-space prediction induces physical abstractions that pixel-space prediction does not**, using developmental-psychology VoE methodology in a fully specified 2D physics sandbox. At mid scale (1k episodes, 80 epochs) we found improved position linear probes and a **JEPA-specific VoE spike on impossible bounce**, but not broad object-permanence or pass-through-wall surprise. The repo, live demo ([physjepa.vercel.app](https://physjepa.vercel.app)), and figure export path are ready for reproduction and presentation.
 
 ## 8. Reproducibility
 

@@ -1,40 +1,67 @@
 # PhysJEPA
 
+[![Live Demo](https://img.shields.io/badge/demo-live-00C7B7?logo=vercel)](https://physjepa.vercel.app)
 [![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
 [![PyTorch](https://img.shields.io/badge/PyTorch-2.0+-ee4c2c.svg)](https://pytorch.org/)
+[![React](https://img.shields.io/badge/React-18-61DAFB?logo=react&logoColor=white)](https://react.dev/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-[![Live Demo](https://img.shields.io/badge/demo-live-00C7B7?logo=vercel)](https://physjepa.vercel.app)
-[![Vercel Deploy](https://img.shields.io/badge/deploy-docs-black?logo=vercel)](docs/DEPLOY.md)
 
-**Controlled diagnostic for the JEPA physics claim:** does self-supervised *latent* future prediction encode naive physics (object permanence, collisions) better than a matched *pixel* reconstruction baseline?
+**A controlled research project testing whether JEPA-style latent prediction encodes naive physics better than pixel reconstruction.**
 
-Evaluation uses **linear probes** and **violation-of-expectation (VoE)** surprise curves in a fully controlled 2D pymunk sandbox (64×64 RGB). Mid-scale run **`paper_mid`**: 1000 train episodes, 80 epochs, JEPA vs pixel on CUDA.
+Train two self-supervised world models on procedural 2D pymunk rollouts, then evaluate with **linear probes** and **violation-of-expectation (VoE)** surprise curves — methodology inspired by developmental psychology, implemented as a full ML pipeline with an interactive web demo.
 
-| | JEPA | Pixel |
-|---|------|-------|
-| xy probe val R² | **0.421** | 0.415 |
-| VoE Δ impossible bounce | **+0.028** | (baseline) |
-| VoE Δ teleport | −0.018 | (baseline) |
+**Live demo → [physjepa.vercel.app](https://physjepa.vercel.app)**
 
-**Headline:** JEPA shows selective surprise on **impossible bounce**; teleport-under-occlusion remains weak — a **nuanced partial** result, not a clean JEPA win.
+<p align="center">
+  <a href="https://physjepa.vercel.app/try"><img src="docs/figures/fig_voe_bounce.png" alt="VoE impossible bounce — JEPA surprise curves" width="48%" /></a>
+  <a href="https://physjepa.vercel.app/results"><img src="docs/figures/fig_comparison_delta.png" alt="JEPA vs pixel VoE spike delta" width="48%" /></a>
+</p>
 
 ---
 
-## Links
+## Highlights
 
-| Resource | Path |
-|----------|------|
-| **Live demo** | **https://physjepa.vercel.app** ([deploy guide](docs/DEPLOY.md)) |
-| Technical report | [`docs/report.md`](docs/report.md) |
-| Demo / SOP script | [`docs/DEMO.md`](docs/DEMO.md) |
-| JSON schema (React) | [`viz/SCHEMA.md`](viz/SCHEMA.md) |
-| Research brief | [`plan.md`](plan.md) |
-| Static figures | [`docs/figures/`](docs/figures/) |
+| | JEPA | Pixel baseline |
+|---|------|----------------|
+| Position probe (xy val R²) | **0.421** | 0.415 |
+| VoE Δ impossible bounce | **+0.028** | (baseline) |
+| VoE Δ teleport | −0.018 | (baseline) |
+| Visibility probe (val acc) | **0.944** | 0.940 |
 
-<p align="center">
-  <img src="docs/figures/fig_comparison_delta.png" alt="VoE spike delta JEPA minus pixel" width="48%" />
-  <img src="docs/figures/fig_voe_bounce.png" alt="VoE impossible bounce curves" width="48%" />
-</p>
+**Finding:** JEPA shows a **selective** surprise spike on impossible bounce; teleport-under-occlusion stays weak — a nuanced partial result, not a clean universal win for either approach.
+
+**Scale:** `paper_mid` run — 1,000 train episodes, 80 epochs, CUDA (RTX 4070 class).
+
+---
+
+## Interactive demo
+
+| Route | Description |
+|-------|-------------|
+| [**/try**](https://physjepa.vercel.app/try) | Scrub matched possible vs impossible rollouts; JEPA surprise updates live |
+| [**/results**](https://physjepa.vercel.app/results) | Metrics, VoE curves, probes, ablations, training — with interpretation |
+| [**/docs**](https://physjepa.vercel.app/docs) | Concepts and math (JEPA loss, probes, VoE spike score) |
+
+Deploy guide: [`docs/DEPLOY.md`](docs/DEPLOY.md)
+
+---
+
+## What I built
+
+- **Custom 2D physics simulator** — pymunk sandbox with procedural scenes, occluders, and held-out VoE probe pairs
+- **JEPA training stack** — CNN encoder, EMA target, MLP/GRU/Transformer predictors, smooth-L1 latent objective
+- **Pixel baseline** — matched-capacity encoder–decoder for fair comparison
+- **Evaluation suite** — frozen linear probes + VoE surprise curves + ablations (occlusion duration, predictor architecture)
+- **Showcase web app** — Vite + React + Recharts multi-route demo on Vercel
+
+---
+
+## Tech stack
+
+**ML:** Python · PyTorch · pymunk · NumPy · YAML configs  
+**Eval:** Linear probes · VoE surprise · ablation sweeps  
+**Frontend:** React · React Router · Recharts · KaTeX · Vite  
+**Deploy:** Vercel (static SPA + committed JSON fixtures)
 
 ---
 
@@ -49,124 +76,37 @@ source .venv/Scripts/activate   # Windows Git Bash
 # source .venv/bin/activate     # Linux / macOS
 
 pip install -e .
-# GPU (recommended):
-pip install torch torchvision --index-url https://download.pytorch.org/whl/cu128
+pip install torch torchvision --index-url https://download.pytorch.org/whl/cu128  # GPU
 ```
 
-### Smoke test (minutes)
+**Smoke test (minutes):**
 
 ```bash
 python scripts/smoke_jepa.py
 python scripts/smoke_pixel.py
 ```
 
-### Full mid-scale pipeline (`paper_mid`)
+**Full pipeline (`paper_mid`):**
 
 ```bash
 python scripts/run_paper_mid.py --device cuda
 ```
 
-Or step-by-step — see [Phases](#phases) below.
-
-### Live demo dashboard
+**Local demo:**
 
 ```bash
 python scripts/export_voe_demo_pairs.py
 python scripts/sync_viz_fixtures.py --jepa-run paper_mid --pixel-run paper_mid
 cd viz/dashboard && npm install && npm run dev
-# → http://localhost:5173  (VoE Replay tab = side-by-side possible/impossible)
 ```
-
-**Deploy to Vercel:** https://physjepa.vercel.app (auto-deploys on push to `main`). See [`docs/DEPLOY.md`](docs/DEPLOY.md).
-
-Tabs: Comparison · VoE · Probes · Ablations · Training · Episode replay.
 
 ---
 
-## Method (one paragraph)
+## Method (summary)
 
-Procedural pymunk rollouts train a small **JEPA** (CNN encoder + EMA target + MLP/GRU/Transformer predictor) with smooth-L1 latent prediction only — no physics labels. A **pixel baseline** matches capacity but reconstructs frames. Held-out VoE pairs (possible vs impossible) test teleport, wall pass-through, stop-without-collision, and impossible bounce. **Linear probes** on frozen latents read out position, velocity, mass, and visibility.
+Procedural pymunk rollouts train a small **JEPA** (CNN encoder + EMA target + predictor) with smooth-L1 **latent** prediction only — no physics labels. A **pixel baseline** matches capacity but reconstructs frames. Held-out VoE pairs (possible vs impossible) test teleport, wall pass-through, stop-without-collision, and impossible bounce. **Linear probes** on frozen latents read out position, velocity, mass, and visibility.
 
----
-
-## Phases
-
-<details>
-<summary><strong>Phase 1 — Data</strong></summary>
-
-```bash
-python scripts/generate_train.py --n 1000 --out data/train
-python scripts/generate_voe.py --out data/voe
-python scripts/preview_rollout.py data/train/episode_000000
-```
-
-</details>
-
-<details>
-<summary><strong>Phase 2 — JEPA train</strong></summary>
-
-```bash
-python scripts/train_jepa.py --config configs/jepa_paper.yaml --run-id paper_mid --device cuda
-```
-
-Artifacts: `runs/jepa/<run_id>/{ckpt_last.pt,summary.json,metrics.jsonl}`
-
-</details>
-
-<details>
-<summary><strong>Phase 3 — Probes + VoE</strong></summary>
-
-```bash
-python scripts/eval_probes.py --ckpt runs/jepa/paper_mid/ckpt_last.pt --device cuda
-python scripts/eval_voe.py --ckpt runs/jepa/paper_mid/ckpt_last.pt --device cuda
-```
-
-</details>
-
-<details>
-<summary><strong>Phase 4 — Pixel baseline + comparison</strong></summary>
-
-```bash
-python scripts/train_pixel.py --config configs/pixel_paper.yaml --run-id paper_mid --device cuda
-python scripts/eval_compare.py \
-  --jepa-ckpt runs/jepa/paper_mid/ckpt_last.pt \
-  --pixel-ckpt runs/pixel/paper_mid/ckpt_last.pt \
-  --device cuda
-```
-
-</details>
-
-<details>
-<summary><strong>Phase 5 — Dashboard</strong></summary>
-
-```bash
-python scripts/sync_viz_fixtures.py --jepa-run paper_mid --pixel-run paper_mid
-cd viz/dashboard && npm run dev
-```
-
-</details>
-
-<details>
-<summary><strong>Phase 6 — Ablations</strong></summary>
-
-```bash
-python scripts/run_ablations.py --config configs/ablations_paper.yaml --epochs 80 --device cuda
-```
-
-Occlusion duration + MLP / GRU / Transformer predictors → `runs/ablations.json`
-
-</details>
-
-<details>
-<summary><strong>Phase 7 — Write-up & figures</strong></summary>
-
-```bash
-python scripts/export_report_figures.py
-```
-
-Report: [`docs/report.md`](docs/report.md)
-
-</details>
+Full write-up: [`docs/report.md`](docs/report.md)
 
 ---
 
@@ -174,22 +114,31 @@ Report: [`docs/report.md`](docs/report.md)
 
 ```
 PhysJEPA/
-├── src/physjepa/     # sim, gen, voe, models, train, eval, data
-├── scripts/          # CLI entrypoints + run_paper_mid.py
-├── configs/          # YAML (jepa_paper, pixel_paper, ablations_paper, …)
-├── docs/             # report, DEMO, figures/
+├── src/physjepa/     # simulator, models, training, eval
+├── scripts/          # CLI + run_paper_mid.py orchestrator
+├── configs/          # YAML experiment configs
+├── docs/             # report, figures, demo guide
 ├── viz/
-│   ├── SCHEMA.md     # JSON contract for dashboard
 │   ├── fixtures/     # committed demo JSON (paper_mid metrics)
-│   └── dashboard/    # Vite + React + Recharts
-└── runs/             # gitignored — train outputs locally
+│   └── dashboard/    # Vite + React showcase app
+└── runs/             # gitignored — local training outputs
 ```
 
 ---
 
-## Citation
+## Documentation
 
-If you use this code, please cite:
+| Resource | Link |
+|----------|------|
+| Live demo | [physjepa.vercel.app](https://physjepa.vercel.app) |
+| Technical report | [`docs/report.md`](docs/report.md) |
+| Presentation guide | [`docs/DEMO.md`](docs/DEMO.md) |
+| JSON schema (dashboard) | [`viz/SCHEMA.md`](viz/SCHEMA.md) |
+| Static figures | [`docs/figures/`](docs/figures/) |
+
+---
+
+## Citation
 
 ```bibtex
 @software{physjepa2026,
@@ -213,9 +162,3 @@ See also [`CITATION.cff`](CITATION.cff).
 ## License
 
 MIT — see [`LICENSE`](LICENSE).
-
----
-
-## Related work
-
-LeCun JEPA / I-JEPA / V-JEPA · Baillargeon VoE · Piloto et al. intuitive physics · Physion / IntPhys / CATER benchmarks. Full discussion in [`docs/report.md`](docs/report.md).

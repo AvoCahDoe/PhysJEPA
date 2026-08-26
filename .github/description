@@ -1,3 +1,1 @@
-# PhysJEPA
-
-Controlled JEPA vs pixel baseline diagnostic for naive physics using violation-of-expectation probes in a 2D pymunk sandbox. See README.md for setup, paper_mid pipeline, and demo dashboard.
+Controlled JEPA vs pixel baseline diagnostic for naive physics. Live demo: https://physjepa.vercel.app — VoE probes, linear probes, interactive replay in a 2D pymunk sandbox.

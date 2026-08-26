@@ -44,9 +44,10 @@ dependencies = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/AvoCahDoe/PhysJEPA"
+Homepage = "https://physjepa.vercel.app"
 Repository = "https://github.com/AvoCahDoe/PhysJEPA"
 Documentation = "https://github.com/AvoCahDoe/PhysJEPA/blob/main/docs/report.md"
+Demo = "https://physjepa.vercel.app"
 Issues = "https://github.com/AvoCahDoe/PhysJEPA/issues"
 
 [project.optional-dependencies]

@@ -1,8 +1,8 @@
 # Demo guide (`paper_mid`)
 
-Use this for a live walkthrough, SOP interview, or slide deck. All numbers are from `runs/comparison.json` and `runs/ablations.json` (1000 train episodes, 80 epochs, RTX 4070).
+Use this for portfolio walkthroughs, interviews, or slide decks. All numbers are from `runs/comparison.json` and `runs/ablations.json` (1000 train episodes, 80 epochs, RTX 4070).
 
-## One-liner (SOP)
+## One-liner
 
 > I designed a controlled diagnostic to test whether latent-space prediction induces physical abstractions that pixel-space prediction does not, using violation-of-expectation methodology from developmental psychology. At mid scale, JEPA shows a selective surprise spike on impossible bounces but not on teleport-under-occlusion — a nuanced partial result, not a clean win for either side.
 
@@ -15,24 +15,25 @@ Use this for a live walkthrough, SOP interview, or slide deck. All numbers are f
 | VoE impossible_bounce Δ | **+0.028** | — | JEPA spikes more at impossible bounce |
 | VoE teleport Δ | −0.018 | — | JEPA *less* surprised (permanence not learned) |
 
-## What to show (pick 2–3)
+## Live demo walkthrough
 
-### Live dashboard
+**URL:** [physjepa.vercel.app](https://physjepa.vercel.app)
+
+Suggested order:
+
+1. **Home** — headline metrics and project overview
+2. **[/try](https://physjepa.vercel.app/try)** — scrub impossible bounce pair to **t***; show JEPA surprise gap on impossible branch
+3. **[/results](https://physjepa.vercel.app/results)** — interpretation cards, then Comparison + VoE curves + Probes
+4. **[/docs](https://physjepa.vercel.app/docs)** — JEPA objective and VoE spike formula (if audience is technical)
+
+Local dev:
 
 ```bash
 python scripts/sync_viz_fixtures.py --jepa-run paper_mid --pixel-run paper_mid
 cd viz/dashboard && npm run dev
 ```
 
-Open http://localhost:5173 and walk through tabs in this order:
-
-1. **Training** — 80-epoch JEPA vs pixel loss curves (not smoke).
-2. **Comparison** — bar chart of Δ VoE spike; point at **impossible bounce** (+0.028).
-3. **VoE Surprise** — possible vs impossible curves; note divergence at `t*` for bounce (switch mentally — dashboard defaults to teleport; cite static figure below for bounce).
-4. **Linear Probes** — xy / visible table.
-5. **Ablations** — transformer highest mean VoE spike; medium occlusion worst teleport spike.
-
-### Static slides (`docs/figures/`)
+## Static slides (`docs/figures/`)
 
 | File | Say this |
 |------|----------|
@@ -45,7 +46,7 @@ Open http://localhost:5173 and walk through tabs in this order:
 
 Regenerate: `python scripts/export_report_figures.py`
 
-### Written report
+## Written report
 
 Full methods + discussion: [`report.md`](report.md)
 
@@ -59,5 +60,5 @@ Full methods + discussion: [`report.md`](report.md)
 ## If asked “what’s next?”
 
 - Scale data and VoE probes; train longer or on harder violation schedules.
-- Per-pair VoE replay in the dashboard (possible vs impossible side-by-side).
+- ONNX/WASM inference in the browser for true live model runs.
 - Compare to V-JEPA / world-model baselines on the same VoE JSON.
