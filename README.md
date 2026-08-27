@@ -5,6 +5,7 @@
 [![PyTorch](https://img.shields.io/badge/PyTorch-2.0+-ee4c2c.svg)](https://pytorch.org/)
 [![React](https://img.shields.io/badge/React-18-61DAFB?logo=react&logoColor=white)](https://react.dev/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![Release](https://img.shields.io/github/v/release/AvoCahDoe/PhysJEPA?label=release)](https://github.com/AvoCahDoe/PhysJEPA/releases)
 
 **A controlled research project testing whether JEPA-style latent prediction encodes naive physics better than pixel reconstruction.**
 
