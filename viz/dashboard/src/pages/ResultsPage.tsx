@@ -4,7 +4,7 @@ import { ComparisonOverview } from "../components/ComparisonOverview";
 import { EpisodePlayer } from "../components/EpisodePlayer";
 import { ProbeComparison } from "../components/ProbeComparison";
 import { TrainingCurves } from "../components/TrainingCurves";
-import { VoEPairReplay } from "../components/VoEPairReplay";
+import { VoEViolationShowcase } from "../components/VoEViolationShowcase";
 import { VoESurprisePanel } from "../components/VoESurpriseChart";
 import { DEFAULT_VOE_TYPE, useFixtures } from "../hooks/useFixtures";
 import { violationTypes } from "../lib/loadRun";
@@ -51,10 +51,10 @@ export function ResultsPage() {
       break;
     case "voe_replay":
       content = data.voeDemo?.pairs?.length ? (
-        <VoEPairReplay
-          index={data.voeDemo.pairs}
-          selectedType={activeVoeType}
-          onSelectType={setVoeType}
+        <VoEViolationShowcase
+          pairs={data.voeDemo.pairs}
+          voe={data.voe}
+          comparison={data.comparison}
         />
       ) : (
         <p className="hint">No VoE demo pairs loaded.</p>

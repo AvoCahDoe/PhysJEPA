@@ -16,7 +16,7 @@ export function HomePage() {
         </p>
         <div className="hero-actions">
           <Link to="/try" className="btn-primary">
-            Try the demo
+            See all violations
           </Link>
           <Link to="/results" className="btn-secondary">
             View results
@@ -43,11 +43,11 @@ export function HomePage() {
           <span className="feature-icon">▶</span>
           <h2>Try</h2>
           <p>
-            Scrub matched possible vs impossible episodes. Watch JEPA surprise update live from
-            exported inference curves at each timestep.
+            All four violation types in one scroll — play possible vs impossible rollouts and watch
+            JEPA surprise update live.
           </p>
           <Link to="/try" className="feature-link">
-            Open playground →
+            See all violations →
           </Link>
         </article>
         <article className="feature-card">

@@ -402,15 +402,119 @@ a {
 }
 
 /* ——— Try / Play ——— */
-.try-layout {
+.violation-showcase {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.showcase-toolbar {
+  position: sticky;
+  top: 4.25rem;
+  z-index: 40;
+  background: #151a24ee;
+  backdrop-filter: blur(10px);
+}
+
+.showcase-toolbar-lead {
+  margin: 0 0 0.85rem;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.violation-jump-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  margin-bottom: 0.85rem;
+}
+
+.violation-jump-nav a {
+  padding: 0.35rem 0.7rem;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: #12151a;
+  color: var(--muted);
+  text-decoration: none;
+  font-size: 0.8rem;
+  transition: border-color 0.15s, color 0.15s;
+}
+
+.violation-jump-nav a:hover {
+  border-color: #5b9bd555;
+  color: #fff;
+}
+
+.showcase-speed {
+  margin-left: 0;
+}
+
+.violation-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.violation-section {
+  scroll-margin-top: 9rem;
+}
+
+.violation-section.violation-highlight {
+  border-color: #6bc98a55;
+  box-shadow: 0 0 0 1px #6bc98a22;
+}
+
+.violation-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+
+.violation-header h2 {
+  margin: 0 0 0.25rem;
+  font-size: 1.15rem;
+}
+
+.violation-desc {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.88rem;
+  max-width: 520px;
+}
+
+.delta-badge {
+  flex-shrink: 0;
+  padding: 0.35rem 0.65rem;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  border: 1px solid var(--border);
+  background: #12151a;
+}
+
+.delta-badge.positive {
+  color: var(--green);
+  border-color: #6bc98a44;
+}
+
+.delta-badge.negative {
+  color: var(--red);
+  border-color: #e07a7a44;
+}
+
+.violation-layout {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 1.25rem;
-  margin-bottom: 1.25rem;
+  align-items: start;
 }
 
 @media (max-width: 960px) {
-  .try-layout {
+  .violation-layout {
     grid-template-columns: 1fr;
   }
 }
@@ -418,6 +522,21 @@ a {
 .try-tips h2 {
   margin-top: 0;
   font-size: 1rem;
+}
+
+.try-tips {
+  margin-top: 1.5rem;
+}
+
+.violation-layout .inference-panel {
+  background: #12151a;
+  border: 1px solid var(--border);
+}
+
+.voe-replay-panel.compact {
+  border: none;
+  padding: 0;
+  background: transparent;
 }
 
 .inference-header {
@@ -908,12 +1027,6 @@ code {
   background: #5b9bd522;
   color: #fff;
   border-color: #5b9bd555;
-}
-
-.voe-replay-panel.compact {
-  border: none;
-  padding: 0;
-  background: transparent;
 }
 
 .badge {

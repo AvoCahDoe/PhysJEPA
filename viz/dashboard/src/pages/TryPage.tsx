@@ -1,28 +1,13 @@
-import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-import { LiveInferencePanel } from "../components/LiveInferencePanel";
-import { VoEPairReplay } from "../components/VoEPairReplay";
-import { DEFAULT_VOE_TYPE, useFixtures } from "../hooks/useFixtures";
-import { violationTypes } from "../lib/loadRun";
+import { VoEViolationShowcase } from "../components/VoEViolationShowcase";
+import { useFixtures } from "../hooks/useFixtures";
 
 interface TryPageProps {
-  autoPlay?: boolean;
+  autoPlayFirst?: boolean;
 }
 
-export function TryPage({ autoPlay = false }: TryPageProps) {
+export function TryPage({ autoPlayFirst = false }: TryPageProps) {
   const { data, loading, error } = useFixtures();
-  const [voeType, setVoeType] = useState(DEFAULT_VOE_TYPE);
-  const [currentT, setCurrentT] = useState(0);
-
-  const voeSummary = data?.voe.by_type[voeType];
-  const demoEntry = data?.voeDemo?.pairs.find((p) => p.violation_type === voeType);
-  const tStar = demoEntry?.t_star ?? voeSummary?.t_star ?? 0;
-  const deltaVsPixel = data?.comparison.delta_voe_spike_jepa_minus_pixel[voeType];
-
-  const types = useMemo(
-    () => (data ? violationTypes(data.voe) : []),
-    [data]
-  );
 
   if (loading) {
     return <p className="status page-status">Loading demo fixtures…</p>;
@@ -34,64 +19,44 @@ export function TryPage({ autoPlay = false }: TryPageProps) {
   return (
     <div className="page try-page">
       <header className="page-header">
-        <h1>Interactive playground</h1>
+        <h1>All violation scenarios</h1>
         <p className="page-lead">
-          Scrub matched possible vs impossible rollouts. JEPA surprise updates from exported{" "}
-          <code>paper_mid</code> eval curves — same metrics as offline VoE, replayed in the browser.
-          Also available at <Link to="/play">/play</Link>.
+          Every VoE probe type side by side — play each rollout, scrub timelines, and watch JEPA
+          surprise respond. No picking from a menu: scroll through all four. Also at{" "}
+          <Link to="/play">/play</Link> (first scenario auto-plays).
         </p>
       </header>
 
-      <div className="try-layout">
-        <div className="try-replay">
-          {data.voeDemo?.pairs?.length ? (
-            <VoEPairReplay
-              index={data.voeDemo.pairs}
-              selectedType={types.includes(voeType) ? voeType : types[0]}
-              onSelectType={setVoeType}
-              onTimeChange={setCurrentT}
-              compact
-              autoPlay={autoPlay}
-            />
-          ) : (
-            <section className="panel">
-              <p className="hint">
-                No VoE demo pairs. Run export + sync scripts locally.
-              </p>
-            </section>
-          )}
-        </div>
-
-        {voeSummary && (
-          <div className="try-inference">
-            <LiveInferencePanel
-              summary={voeSummary}
-              violationType={voeType}
-              currentT={currentT}
-              tStar={tStar}
-              deltaVsPixel={deltaVsPixel}
-            />
-          </div>
-        )}
-      </div>
+      {data.voeDemo?.pairs?.length ? (
+        <VoEViolationShowcase
+          pairs={data.voeDemo.pairs}
+          voe={data.voe}
+          comparison={data.comparison}
+          autoPlayFirst={autoPlayFirst}
+        />
+      ) : (
+        <section className="panel">
+          <p className="hint">No VoE demo pairs. Run export + sync scripts locally.</p>
+        </section>
+      )}
 
       <section className="panel try-tips">
         <h2>How to read this</h2>
         <ul className="doc-list">
           <li>
-            <strong>t*</strong> marks when the impossible branch diverges (e.g. wrong bounce
-            restitution).
+            <strong>t*</strong> marks when the impossible branch diverges (highlighted border at
+            that frame).
           </li>
           <li>
-            A physics-like model should show higher surprise on the impossible branch near{" "}
-            <strong>t*</strong> — strongest for impossible bounce in our mid-scale run.
+            <strong>Impossible bounce</strong> shows the clearest JEPA surprise gap (Δ ≈ +0.028 vs
+            pixel). Other violations are weaker or inverted.
           </li>
           <li>
-            Hit <strong>Play</strong> (or space) to run the full rollout. Choose speed:{" "}
-            <strong>1 · 2 · 4 fps</strong>. Use ← → or the slider when paused.
+            Use the jump links at the top, or scroll. Each section has its own Play control; set
+            global speed to <strong>1 · 2 · 4 fps</strong>.
           </li>
           <li>
-            Compare aggregate metrics on <Link to="/results">Results</Link>.
+            Aggregate charts and probes on <Link to="/results">Results</Link>.
           </li>
         </ul>
       </section>
@@ -99,7 +64,7 @@ export function TryPage({ autoPlay = false }: TryPageProps) {
   );
 }
 
-/** /play — auto-starts the full animation on load */
+/** /play — auto-starts the first violation on load */
 export function PlayPage() {
-  return <TryPage autoPlay />;
+  return <TryPage autoPlayFirst />;
 }

@@ -38,7 +38,8 @@ Train two self-supervised world models on procedural 2D pymunk rollouts, then ev
 
 | Route | Description |
 |-------|-------------|
-| [**/try**](https://physjepa.vercel.app/try) | Scrub matched possible vs impossible rollouts; JEPA surprise updates live |
+| [**/try**](https://physjepa.vercel.app/try) | All four violations — scroll through replays + live JEPA surprise |
+| [**/play**](https://physjepa.vercel.app/play) | Same showcase; first scenario auto-plays |
 | [**/results**](https://physjepa.vercel.app/results) | Metrics, VoE curves, probes, ablations, training — with interpretation |
 | [**/docs**](https://physjepa.vercel.app/docs) | Concepts and math (JEPA loss, probes, VoE spike score) |
 

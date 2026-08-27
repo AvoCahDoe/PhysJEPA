@@ -1,19 +1,21 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import type { EpisodeMeta, VoEDemoEntry } from "../types/schema";
 import { fetchJson, formatViolationLabel, paths } from "../lib/loadRun";
 
 /** User-selectable playback speeds (frames per second). */
-const PLAYBACK_SPEEDS = [1, 2, 4] as const;
-type PlaybackSpeed = (typeof PLAYBACK_SPEEDS)[number];
+export const PLAYBACK_SPEEDS = [1, 2, 4] as const;
+export type PlaybackSpeed = (typeof PLAYBACK_SPEEDS)[number];
 
 interface VoEPairReplayProps {
-  index: VoEDemoEntry[];
-  selectedType: string;
-  onSelectType: (t: string) => void;
+  entry: VoEDemoEntry;
   onTimeChange?: (t: number) => void;
   compact?: boolean;
-  /** Start from t=0 and auto-play when the pair loads (e.g. /play route). */
+  /** Start from t=0 and auto-play when the pair loads. */
   autoPlay?: boolean;
+  /** Controlled playback speed; hides local speed control when set with showSpeedControl=false. */
+  playbackFps?: PlaybackSpeed;
+  showSpeedControl?: boolean;
+  enableKeyboard?: boolean;
 }
 
 function PairPanel({
@@ -61,27 +63,24 @@ function PairPanel({
 }
 
 export function VoEPairReplay({
-  index,
-  selectedType,
-  onSelectType,
+  entry,
   onTimeChange,
   compact = false,
   autoPlay = false,
+  playbackFps: playbackFpsProp,
+  showSpeedControl = true,
+  enableKeyboard = true,
 }: VoEPairReplayProps) {
-  const entry = useMemo(
-    () => index.find((p) => p.violation_type === selectedType) ?? index[0],
-    [index, selectedType]
-  );
-
   const [possible, setPossible] = useState<EpisodeMeta | null>(null);
   const [impossible, setImpossible] = useState<EpisodeMeta | null>(null);
   const [t, setT] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
-  const [playbackFps, setPlaybackFps] = useState<PlaybackSpeed>(2);
+  const [localFps, setLocalFps] = useState<PlaybackSpeed>(2);
   const [loadErr, setLoadErr] = useState<string | null>(null);
 
+  const playbackFps = playbackFpsProp ?? localFps;
   const T = possible?.T ?? impossible?.T ?? 1;
-  const tStar = entry?.t_star ?? 0;
+  const tStar = entry.t_star ?? 0;
 
   const setTAndNotify = useCallback(
     (next: number) => {
@@ -94,7 +93,6 @@ export function VoEPairReplay({
   const clamp = useCallback((v: number) => Math.max(0, Math.min(T - 1, v)), [T]);
 
   useEffect(() => {
-    if (!entry) return;
     let cancelled = false;
     setLoadErr(null);
     setIsPlaying(false);
@@ -166,6 +164,7 @@ export function VoEPairReplay({
   }, [setTAndNotify]);
 
   useEffect(() => {
+    if (!enableKeyboard) return;
     const onKey = (e: KeyboardEvent) => {
       if (e.key === " ") {
         e.preventDefault();
@@ -182,49 +181,27 @@ export function VoEPairReplay({
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [clamp, isPlaying, t, setTAndNotify, handlePlayPause]);
-
-  if (!entry) {
-    return <p className="hint">No VoE demo pairs loaded.</p>;
-  }
+  }, [clamp, enableKeyboard, isPlaying, t, setTAndNotify, handlePlayPause]);
 
   if (loadErr) {
     return <p className="error">{loadErr}</p>;
   }
 
   if (!possible || !impossible) {
-    return <p className="status">Loading pair…</p>;
+    return <p className="status">Loading {formatViolationLabel(entry.violation_type)}…</p>;
   }
 
   return (
-    <section className={`panel voe-replay-panel ${compact ? "compact" : ""}`}>
+    <div className={`voe-replay-panel ${compact ? "compact" : ""}`}>
       {!compact && (
         <>
-          <h2>VoE pair replay</h2>
+          <h2>{formatViolationLabel(entry.violation_type)}</h2>
           <p className="hint">
-            Matched possible vs impossible rollouts · shared timeline ·{" "}
-            <strong>t*={tStar}</strong> is the violation · ← → keys
+            Matched possible vs impossible · <strong>t*={tStar}</strong> violation · ← → when
+            focused
           </p>
         </>
       )}
-
-      <div className="selector-row">
-        <label htmlFor="voe-replay-type">Violation</label>
-        <select
-          id="voe-replay-type"
-          value={selectedType}
-          onChange={(e) => onSelectType(e.target.value)}
-        >
-          {index.map((p) => (
-            <option key={p.pair_id} value={p.violation_type}>
-              {formatViolationLabel(p.violation_type)}
-            </option>
-          ))}
-        </select>
-        {entry.description && (
-          <span className="pair-desc">{entry.description}</span>
-        )}
-      </div>
 
       <div className="pair-grid">
         <PairPanel
@@ -261,29 +238,31 @@ export function VoEPairReplay({
           Frame {t + 1} / {T}
           {isPlaying && <span className="chip chip-live">playing</span>}
         </span>
-        <div className="speed-control" role="group" aria-label="Playback speed">
-          <span className="speed-label">Speed</span>
-          {PLAYBACK_SPEEDS.map((speed) => (
-            <button
-              key={speed}
-              type="button"
-              className={`speed-btn ${playbackFps === speed ? "active" : ""}`}
-              onClick={() => setPlaybackFps(speed)}
-              aria-pressed={playbackFps === speed}
-            >
-              {speed} fps
-            </button>
-          ))}
-        </div>
+        {showSpeedControl && (
+          <div className="speed-control" role="group" aria-label="Playback speed">
+            <span className="speed-label">Speed</span>
+            {PLAYBACK_SPEEDS.map((speed) => (
+              <button
+                key={speed}
+                type="button"
+                className={`speed-btn ${playbackFps === speed ? "active" : ""}`}
+                onClick={() => setLocalFps(speed)}
+                aria-pressed={playbackFps === speed}
+              >
+                {speed} fps
+              </button>
+            ))}
+          </div>
+        )}
       </div>
 
       <div className="timeline-wrap">
-        <label htmlFor="pair-slider">
+        <label htmlFor={`pair-slider-${entry.pair_id}`}>
           t = {t}
           {t === tStar && <span className="star-badge"> t* violation</span>}
         </label>
         <input
-          id="pair-slider"
+          id={`pair-slider-${entry.pair_id}`}
           type="range"
           min={0}
           max={T - 1}
@@ -305,6 +284,6 @@ export function VoEPairReplay({
           <span>{T - 1}</span>
         </div>
       </div>
-    </section>
+    </div>
   );
 }
